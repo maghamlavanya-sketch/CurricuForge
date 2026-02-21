@@ -324,6 +324,284 @@ def convert_to_triplets(source):
 
     return triplets
 
+def generate_flowchart_data(topic):
+    """Generate subject-specific learning progression flowchart from beginner to expert."""
+    
+    # Subject-specific learning paths
+    subject_paths = {
+        # Programming Languages
+        "python": [
+            {"stage": "Beginner", "focus": "Syntax & Basics", "skills": "Variables, Data Types, Loops, Conditionals"},
+            {"stage": "Intermediate", "focus": "Functions & Modules", "skills": "Functions, File I/O, Libraries, Debugging"},
+            {"stage": "Advanced", "focus": "OOP & Design", "skills": "Classes, Inheritance, Design Patterns, Testing"},
+            {"stage": "Expert", "focus": "Optimization & Mastery", "skills": "Performance Tuning, Async, Frameworks, Architecture"}
+        ],
+        "javascript": [
+            {"stage": "Beginner", "focus": "Core Syntax", "skills": "Variables, Functions, DOM Manipulation"},
+            {"stage": "Intermediate", "focus": "ES6+ Features", "skills": "Async/Await, Closures, APIs, Callbacks"},
+            {"stage": "Advanced", "focus": "Frameworks", "skills": "React/Vue/Angular, State Management, Build Tools"},
+            {"stage": "Expert", "focus": "Full-Stack Master", "skills": "Performance, Architecture, Optimization, Leadership"}
+        ],
+        "java": [
+            {"stage": "Beginner", "focus": "OOP Fundamentals", "skills": "Syntax, Classes, Objects, Inheritance"},
+            {"stage": "Intermediate", "focus": "Advanced OOP", "skills": "Interfaces, Exceptions, Collections, Generics"},
+            {"stage": "Advanced", "focus": "Enterprise Features", "skills": "Streams, Concurrency, Design Patterns, Testing"},
+            {"stage": "Expert", "focus": "Architecture Master", "skills": "Scalability, Performance, Spring Framework, Cloud"}
+        ],
+        "machine learning": [
+            {"stage": "Beginner", "focus": "Math Foundations", "skills": "Linear Algebra, Probability, Statistics Basics"},
+            {"stage": "Intermediate", "focus": "Supervised Learning", "skills": "Regression, Classification, Feature Engineering"},
+            {"stage": "Advanced", "focus": "Advanced Algorithms", "skills": "Neural Networks, Ensemble Methods, Optimization"},
+            {"stage": "Expert", "focus": "Production ML", "skills": "Deep Learning, MLOps, Model Deployment, Research"}
+        ],
+        "data science": [
+            {"stage": "Beginner", "focus": "Data Fundamentals", "skills": "SQL, Python, Data Types, Basic EDA"},
+            {"stage": "Intermediate", "focus": "Data Analysis", "skills": "Pandas, Visualization, Statistics, Preprocessing"},
+            {"stage": "Advanced", "focus": "Advanced Analytics", "skills": "ML Algorithms, Time Series, Big Data Tools"},
+            {"stage": "Expert", "focus": "Data Strategy", "skills": "ML Models, Insights Generation, Business Impact, Leadership"}
+        ],
+        "web development": [
+            {"stage": "Beginner", "focus": "Web Basics", "skills": "HTML, CSS, JavaScript Fundamentals, Responsive Design"},
+            {"stage": "Intermediate", "focus": "Frontend Frameworks", "skills": "React/Vue, API Integration, State Management"},
+            {"stage": "Advanced", "focus": "Full-Stack & Backend", "skills": "Node.js, Databases, API Development, Security"},
+            {"stage": "Expert", "focus": "Architecture & Leadership", "skills": "Scalable Systems, DevOps, Performance, Team Leadership"}
+        ],
+        "database design": [
+            {"stage": "Beginner", "focus": "SQL Basics", "skills": "SELECT, INSERT, UPDATE, DELETE, Basic Joins"},
+            {"stage": "Intermediate", "focus": "Advanced SQL", "skills": "Complex Joins, Aggregations, Stored Procedures, Indexing"},
+            {"stage": "Advanced", "focus": "Database Design", "skills": "Normalization, Schema Design, Optimization, Backup"},
+            {"stage": "Expert", "focus": "Advanced DBA", "skills": "Performance Tuning, Replication, Security, Architecture"}
+        ],
+        "cloud computing": [
+            {"stage": "Beginner", "focus": "Cloud Basics", "skills": "Compute, Storage, Basic Services, Account Setup"},
+            {"stage": "Intermediate", "focus": "Cloud Services", "skills": "Networking, Databases, Load Balancing, Scaling"},
+            {"stage": "Advanced", "focus": "Architecture Design", "skills": "Infrastructure as Code, Auto-scaling, CI/CD, Security"},
+            {"stage": "Expert", "focus": "Cloud Strategy", "skills": "Cost Optimization, Multi-cloud, Solutions Architect, Leadership"}
+        ],
+        "cybersecurity": [
+            {"stage": "Beginner", "focus": "Security Basics", "skills": "Encryption, Common Attacks, Network Basics"},
+            {"stage": "Intermediate", "focus": "Advanced Security", "skills": "Penetration Testing, Firewalls, Cryptography"},
+            {"stage": "Advanced", "focus": "Infrastructure Security", "skills": "System Hardening, Threat Detection, Incident Response"},
+            {"stage": "Expert", "focus": "Security Strategy", "skills": "Risk Management, Compliance, Architecture, Governance"}
+        ],
+        "ios development": [
+            {"stage": "Beginner", "focus": "Swift Basics", "skills": "Syntax, Variables, Functions, UIKit Fundamentals"},
+            {"stage": "Intermediate", "focus": "App Development", "skills": "View Controllers, Navigation, APIs, Core Data"},
+            {"stage": "Advanced", "focus": "Advanced Features", "skills": "Animations, Threading, Performance, SwiftUI"},
+            {"stage": "Expert", "focus": "App Architecture", "skills": "Complex Apps, App Store Optimization, Security, Leadership"}
+        ],
+        "android development": [
+            {"stage": "Beginner", "focus": "Kotlin Basics", "skills": "Syntax, Variables, Functions, Activity Fundamentals"},
+            {"stage": "Intermediate", "focus": "App Development", "skills": "Layouts, Fragments, Services, APIs, Room DB"},
+            {"stage": "Advanced", "focus": "Advanced Features", "skills": "Threading, Performance, Jetpack, Testing"},
+            {"stage": "Expert", "focus": "App Architecture", "skills": "Complex Apps, Play Store, Security, Architecture"}
+        ],
+        "deep learning": [
+            {"stage": "Beginner", "focus": "Neural Basics", "skills": "Perceptron, Activation, Forward & Backprop"},
+            {"stage": "Intermediate", "focus": "CNN & RNN", "skills": "Convolutional Nets, Recurrent Nets, Embeddings"},
+            {"stage": "Advanced", "focus": "Advanced Models", "skills": "Transformers, GANs, Autoencoders, Attention"},
+            {"stage": "Expert", "focus": "Research & Production", "skills": "Model Optimization, Deployment, Novel Architectures"}
+        ],
+        "docker": [
+            {"stage": "Beginner", "focus": "Basics", "skills": "Images, Containers, Dockerfiles, Basic Commands"},
+            {"stage": "Intermediate", "focus": "Docker Compose", "skills": "Multi-container, Networks, Volumes, Registries"},
+            {"stage": "Advanced", "focus": "Production Docker", "skills": "Optimization, Orchestration Basics, Security"},
+            {"stage": "Expert", "focus": "Container Strategy", "skills": "Kubernetes Integration, Distribution, Architecture"}
+        ],
+    }
+    
+    # Get the learning path for the subject (case-insensitive)
+    topic_lower = topic.lower().strip()
+    learning_path = None
+    
+    # Try exact match first
+    if topic_lower in subject_paths:
+        learning_path = subject_paths[topic_lower]
+    else:
+        # Try partial matching
+        for key in subject_paths:
+            if key in topic_lower or topic_lower in key:
+                learning_path = subject_paths[key]
+                break
+    
+    # If no specific path found, create a generic one based on topic
+    if not learning_path:
+        learning_path = [
+            {"stage": "Beginner", "focus": "Fundamentals & Theory", "skills": f"Basic concepts, Core principles, Essential terminology of {topic}"},
+            {"stage": "Intermediate", "focus": "Practical Application", "skills": f"Real-world projects, Problem-solving, Tools & frameworks for {topic}"},
+            {"stage": "Advanced", "focus": "Advanced Techniques", "skills": f"Complex scenarios, Best practices, Optimization, Design patterns"},
+            {"stage": "Expert", "focus": "Mastery & Leadership", "skills": f"Innovation, Teaching, Architecture, Industry leadership in {topic}"}
+        ]
+    
+    flowchart_data = {
+        "topic": topic,
+        "stages": learning_path,
+        "mermaid_diagram": ""
+    }
+    
+    # Generate Mermaid diagram syntax
+    mermaid_lines = ['graph TD']
+    mermaid_lines.append(f'    Start["🚀 Start: {topic}"]')
+    
+    # Create nodes for each stage
+    node_ids = ['Start']
+    for i, stage_info in enumerate(learning_path):
+        node_id = f'L{i+1}'
+        node_ids.append(node_id)
+        stage = stage_info['stage']
+        focus = stage_info['focus']
+        skills = stage_info['skills']
+        
+        # Escape special characters for Mermaid
+        skills_display = skills.replace('"', "'")
+        mermaid_lines.append(f'    {node_id}["<b>{stage}</b><br/>{focus}<br/>━━━━<br/>{skills_display}"]')
+    
+    # Add final node
+    final_node = 'Expert'
+    node_ids.append(final_node)
+    mermaid_lines.append(f'    {final_node}["🎯 Expert Achieved<br/>Leading in {topic}"]')
+    
+    # Create connections
+    for i in range(len(node_ids) - 1):
+        mermaid_lines.append(f'    {node_ids[i]} --> {node_ids[i+1]}')
+    
+    # Add styling
+    mermaid_lines.append(f'    style Start fill:#87ceeb,stroke:#333,stroke-width:2px')
+    mermaid_lines.append(f'    style L1 fill:#ffeb3b,stroke:#333,stroke-width:2px')
+    mermaid_lines.append(f'    style L2 fill:#ff9800,stroke:#333,stroke-width:2px')
+    mermaid_lines.append(f'    style L3 fill:#ff6b6b,stroke:#333,stroke-width:2px')
+    mermaid_lines.append(f'    style L4 fill:#8bc34a,stroke:#333,stroke-width:2px')
+    mermaid_lines.append(f'    style Expert fill:#4caf50,stroke:#333,stroke-width:3px,color:#fff')
+    
+    flowchart_data["mermaid_diagram"] = '\n'.join(mermaid_lines)
+    
+    return flowchart_data
+
+
+def generate_references(topic):
+    """Generate subject-specific reference links and resources."""
+    
+    subject_references = {
+        "python": [
+            {"title": "Python Official Documentation", "url": "https://docs.python.org/3/", "type": "Official Docs"},
+            {"title": "Real Python Tutorials", "url": "https://realpython.com/", "type": "Tutorial"},
+            {"title": "Python Enhancement Proposals (PEPs)", "url": "https://www.python.org/dev/peps/", "type": "Reference"},
+            {"title": "Stack Overflow - Python Tag", "url": "https://stackoverflow.com/questions/tagged/python", "type": "Q&A"},
+            {"title": "GeeksforGeeks - Python", "url": "https://www.geeksforgeeks.org/python/", "type": "Tutorial"},
+        ],
+        "javascript": [
+            {"title": "MDN Web Docs - JavaScript", "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript", "type": "Official Docs"},
+            {"title": "JavaScript.info", "url": "https://javascript.info/", "type": "Tutorial"},
+            {"title": "ECMAScript Specification", "url": "https://www.ecma-international.org/publications-and-standards/standards/ecma-262/", "type": "Specification"},
+            {"title": "Stack Overflow - JavaScript", "url": "https://stackoverflow.com/questions/tagged/javascript", "type": "Q&A"},
+            {"title": "FreeCodeCamp JavaScript Course", "url": "https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/", "type": "Course"},
+        ],
+        "java": [
+            {"title": "Oracle Java Documentation", "url": "https://docs.oracle.com/javase/", "type": "Official Docs"},
+            {"title": "GeeksforGeeks - Java", "url": "https://www.geeksforgeeks.org/java/", "type": "Tutorial"},
+            {"title": "Baeldung - Java Tutorials", "url": "https://www.baeldung.com/", "type": "Tutorial"},
+            {"title": "Stack Overflow - Java", "url": "https://stackoverflow.com/questions/tagged/java", "type": "Q&A"},
+            {"title": "Java API Reference", "url": "https://docs.oracle.com/en/java/javase/java-docs.html", "type": "Reference"},
+        ],
+        "web development": [
+            {"title": "MDN Web Docs", "url": "https://developer.mozilla.org/", "type": "Official Docs"},
+            {"title": "Can I Use", "url": "https://caniuse.com/", "type": "Tool"},
+            {"title": "CSS-Tricks", "url": "https://css-tricks.com/", "type": "Tutorial"},
+            {"title": "Web.dev by Google", "url": "https://web.dev/", "type": "Learning Platform"},
+            {"title": "FreeCodeCamp - Responsive Web Design", "url": "https://www.freecodecamp.org/learn/responsive-web-design/", "type": "Course"},
+        ],
+        "machine learning": [
+            {"title": "Scikit-learn Documentation", "url": "https://scikit-learn.org/stable/", "type": "Official Docs"},
+            {"title": "TensorFlow/Keras Documentation", "url": "https://www.tensorflow.org/", "type": "Official Docs"},
+            {"title": "Fast.ai - Practical Deep Learning", "url": "https://www.fast.ai/", "type": "Course"},
+            {"title": "Andrew Ng's Machine Learning Course", "url": "https://www.coursera.org/learn/machine-learning", "type": "Course"},
+            {"title": "Kaggle - ML Competitions", "url": "https://www.kaggle.com/", "type": "Platform"},
+        ],
+        "data science": [
+            {"title": "Pandas Documentation", "url": "https://pandas.pydata.org/docs/", "type": "Official Docs"},
+            {"title": "NumPy Documentation", "url": "https://numpy.org/doc/", "type": "Official Docs"},
+            {"title": "Kaggle Learn - Free Micro-Courses", "url": "https://kaggle.com/learn", "type": "Course"},
+            {"title": "Mode Analytics SQL Tutorial", "url": "https://mode.com/sql-tutorial/", "type": "Tutorial"},
+            {"title": "Towards Data Science - Medium", "url": "https://towardsdatascience.com/", "type": "Blog"},
+        ],
+        "databases": [
+            {"title": "MySQL Official Documentation", "url": "https://dev.mysql.com/doc/", "type": "Official Docs"},
+            {"title": "PostgreSQL Documentation", "url": "https://www.postgresql.org/docs/", "type": "Official Docs"},
+            {"title": "MongoDB Manual", "url": "https://docs.mongodb.com/manual/", "type": "Official Docs"},
+            {"title": "SQL Tutorial - W3Schools", "url": "https://www.w3schools.com/sql/", "type": "Tutorial"},
+            {"title": "LeetCode - Database", "url": "https://leetcode.com/problemset/database/", "type": "Practice"},
+        ],
+        "cloud computing": [
+            {"title": "AWS Documentation", "url": "https://docs.aws.amazon.com/", "type": "Official Docs"},
+            {"title": "Google Cloud Documentation", "url": "https://cloud.google.com/docs", "type": "Official Docs"},
+            {"title": "Microsoft Azure Documentation", "url": "https://docs.microsoft.com/en-us/azure/", "type": "Official Docs"},
+            {"title": "Cloud Academy - Cloud Training", "url": "https://cloudacademy.com/", "type": "Course"},
+            {"title": "A Cloud Guru", "url": "https://acloudguru.com/", "type": "Course"},
+        ],
+        "cybersecurity": [
+            {"title": "OWASP Top 10", "url": "https://owasp.org/www-project-top-ten/", "type": "Reference"},
+            {"title": "HackTheBox - Cybersecurity Practice", "url": "https://www.hackthebox.com/", "type": "Platform"},
+            {"title": "Web Security Academy by PortSwigger", "url": "https://portswigger.net/web-security", "type": "Course"},
+            {"title": "NIST Cybersecurity Framework", "url": "https://www.nist.gov/cyberframework", "type": "Reference"},
+            {"title": "TryHackMe - Cybersecurity Training", "url": "https://tryhackme.com/", "type": "Platform"},
+        ],
+        "ios development": [
+            {"title": "Apple Developer Documentation", "url": "https://developer.apple.com/documentation/", "type": "Official Docs"},
+            {"title": "Swift.org Documentation", "url": "https://swift.org/documentation/", "type": "Official Docs"},
+            {"title": "Ray Wenderlich - iOS Tutorials", "url": "https://www.raywenderlich.com/ios", "type": "Tutorial"},
+            {"title": "Hacking with Swift", "url": "https://www.hackingwithswift.com/", "type": "Tutorial"},
+            {"title": "App Store Guidelines", "url": "https://developer.apple.com/app-store/review/guidelines/", "type": "Guidelines"},
+        ],
+        "android development": [
+            {"title": "Android Developer Documentation", "url": "https://developer.android.com/docs", "type": "Official Docs"},
+            {"title": "Google Developers - Android Codelabs", "url": "https://developer.android.com/codelabs", "type": "Course"},
+            {"title": "Kotlin Official Documentation", "url": "https://kotlinlang.org/docs/", "type": "Official Docs"},
+            {"title": "Ray Wenderlich - Android Tutorials", "url": "https://www.raywenderlich.com/android", "type": "Tutorial"},
+            {"title": "Android Arsenal - Library Directory", "url": "https://android-arsenal.com/", "type": "Resource"},
+        ],
+        "docker": [
+            {"title": "Docker Official Documentation", "url": "https://docs.docker.com/", "type": "Official Docs"},
+            {"title": "Play with Docker", "url": "https://www.docker.com/play-with-docker", "type": "Interactive"},
+            {"title": "Docker Hub", "url": "https://hub.docker.com/", "url": "Registry"},
+            {"title": "KataCoda - Docker Scenarios", "url": "https://www.katacoda.com/", "type": "Interactive"},
+            {"title": "Docker Mastery Course", "url": "https://www.udemy.com/course/docker-mastery/", "type": "Course"},
+        ],
+        "deep learning": [
+            {"title": "TensorFlow Tutorials", "url": "https://www.tensorflow.org/tutorials", "type": "Tutorial"},
+            {"title": "PyTorch Documentation", "url": "https://pytorch.org/docs/", "type": "Official Docs"},
+            {"title": "Fast.ai - Practical Deep Learning", "url": "https://www.fast.ai/", "type": "Course"},
+            {"title": "Deep Learning Specialization - Coursera", "url": "https://www.coursera.org/specializations/deep-learning", "type": "Course"},
+            {"title": "arXiv - AI Research Papers", "url": "https://arxiv.org/list/cs.LG/recent", "type": "Research"},
+        ],
+    }
+    
+    # Get references for the topic (case-insensitive)
+    topic_lower = topic.lower().strip()
+    references = None
+    
+    # Try exact match
+    if topic_lower in subject_references:
+        references = subject_references[topic_lower]
+    else:
+        # Try partial matching
+        for key in subject_references:
+            if key in topic_lower or topic_lower in key:
+                references = subject_references[key]
+                break
+    
+    # If no specific references found, create generic ones
+    if not references:
+        references = [
+            {"title": f"{topic} - Wikipedia", "url": f"https://en.wikipedia.org/wiki/{topic.replace(' ', '_')}", "type": "General"},
+            {"title": f"{topic} - Stack Overflow", "url": f"https://stackoverflow.com/search?q={topic}", "type": "Q&A"},
+            {"title": f"{topic} - GitHub", "url": "https://github.com/search?q=" + topic.replace(" ", "+"), "type": "Code Repository"},
+            {"title": f"{topic} - Medium", "url": f"https://medium.com/search?q={topic}", "type": "Blog"},
+            {"title": f"{topic} - YouTube Tutorials", "url": f"https://www.youtube.com/results?search_query={topic}+tutorial", "type": "Video"},
+        ]
+    
+    return references
+
+
 def generate_timetable(subject, topics_str, free_time, plan_type):
     """Generate a timetable structure using the user's inputs.
 
@@ -432,12 +710,18 @@ def index():
     result = None
     table = None
     grid = None
+    flowchart_data = None
+    references = None
 
     if request.method == "POST":
         subject = request.form["subject"]
         topics = request.form.get("topics", "")
         free_time = request.form["free_time"]
         plan_type = request.form["plan_type"]
+
+        # Generate flowchart data and references
+        flowchart_data = generate_flowchart_data(subject)
+        references = generate_references(subject)
 
         result = generate_timetable(subject, topics, free_time, plan_type)
         if isinstance(result, dict) and 'rows' in result and 'days' in result:
@@ -471,7 +755,7 @@ def index():
             tbl = parse_text_to_table(result)
             if tbl:
                 table = tbl
-    return render_template("index.html", result=result, table=table, grid=grid)
+    return render_template("index.html", result=result, table=table, grid=grid, flowchart_data=flowchart_data, references=references)
 
 
 if __name__ == "__main__":
