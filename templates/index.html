@@ -12,15 +12,12 @@
         <label>Subject:</label><br>
         <input type="text" name="subject" required><br><br>
 
+        <label>Topics (comma-separated):</label><br>
+        <input type="text" name="topics" required><br><br>
+
         <label>Available Time Per Day (e.g., 2 hours):</label><br>
         <input type="text" name="free_time" required><br><br>
 
-        <label>Level:</label><br>
-        <select name="level" required>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-        </select><br><br>
 
         <label>Plan Type:</label><br>
         <select name="plan_type" required>
@@ -33,7 +30,69 @@
 
     </form>
 
-    {% if result %}
+    {% if triplets %}
+        <h2>Your Study Plan (Topic — Day — Time)</h2>
+        <table border="1" cellpadding="6" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in triplets %}
+                    <tr>
+                        <td>{{ row.topic }}</td>
+                        <td>{{ row.day }}</td>
+                        <td>{{ row.time }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif grid %}
+        <h2>Your Weekly Timetable</h2>
+        <table border="1" cellpadding="6" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    {% for d in grid.days %}
+                        <th>{{ d }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in grid.rows %}
+                    <tr>
+                        <td>{{ row.time }}</td>
+                        {% for d in grid.days %}
+                            <td>{{ row.get(d, '') }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif table %}
+        <h2>Your Timetable (list):</h2>
+        <table border="1" cellpadding="6" cellspacing="0">
+            <thead>
+                <tr>
+                    {% for k in table[0].keys() %}
+                        <th>{{ k|capitalize }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in table %}
+                    <tr>
+                        {% for v in row.values() %}
+                            <td>{{ v }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif result %}
         <h2>Your Timetable:</h2>
         <pre>{{ result }}</pre>
     {% endif %}
