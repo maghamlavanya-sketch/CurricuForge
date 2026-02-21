@@ -2,100 +2,270 @@
 <html>
 <head>
     <title>CurricuForge - AI Timetable Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #2196F3;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table thead {
+            background-color: #2196F3;
+            color: white;
+        }
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        table tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+            max-width: 400px;
+        }
+        button {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #1976D2;
+        }
+        .flowchart-container {
+            background-color: #f9f9f9;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        .references-container {
+            background-color: #fffacd;
+            border: 2px solid #ff9800;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .reference-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .reference-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .reference-item h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .reference-item a {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #ff9800;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .reference-item a:hover {
+            background-color: #e68900;
+        }
+        .reference-type {
+            display: inline-block;
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
-<body style="font-family: Arial; margin: 40px;">
+<body>
+    <div class="container">
+        <h1>🎓 CurricuForge - AI Timetable & Learning Path Generator</h1>
 
-    <h1>AI Timetable Generator</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label>Subject:</label>
+                <input type="text" name="subject" required><br>
+            </div>
 
-    <form method="POST">
+            <div class="form-group">
+                <label>Topics (comma-separated):</label>
+                <input type="text" name="topics" required><br>
+            </div>
 
-        <label>Subject:</label><br>
-        <input type="text" name="subject" required><br><br>
+            <div class="form-group">
+                <label>Available Time Per Day (e.g., 2 hours):</label>
+                <input type="text" name="free_time" required><br>
+            </div>
 
-        <label>Topics (comma-separated):</label><br>
-        <input type="text" name="topics" required><br><br>
+            <div class="form-group">
+                <label>Plan Type:</label>
+                <select name="plan_type" required>
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                </select><br>
+            </div>
 
-        <label>Available Time Per Day (e.g., 2 hours):</label><br>
-        <input type="text" name="free_time" required><br><br>
+            <button type="submit">Generate Timetable & Learning Path</button>
+        </form>
 
+        {% if flowchart_data %}
+            <div class="flowchart-container">
+                <h2>📊 Your Learning Path - From Beginner to Expert</h2>
+                <p><strong>Subject:</strong> {{ flowchart_data.topic }}</p>
+                <div class="mermaid">
+                    {{ flowchart_data.mermaid_diagram }}
+                </div>
+            </div>
+        {% endif %}
 
-        <label>Plan Type:</label><br>
-        <select name="plan_type" required>
-            <option value="Daily">Daily</option>
-            <option value="Weekly">Weekly</option>
-            <option value="Monthly">Monthly</option>
-        </select><br><br>
-
-        <button type="submit">Generate Timetable</button>
-
-    </form>
-
-    {% if triplets %}
-        <h2>Your Study Plan (Topic — Day — Time)</h2>
-        <table border="1" cellpadding="6" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>Topic</th>
-                    <th>Day</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in triplets %}
+        {% if triplets %}
+            <h2>Your Study Plan (Topic — Day — Time)</h2>
+            <table border="1" cellpadding="6" cellspacing="0">
+                <thead>
                     <tr>
-                        <td>{{ row.topic }}</td>
-                        <td>{{ row.day }}</td>
-                        <td>{{ row.time }}</td>
+                        <th>Topic</th>
+                        <th>Day</th>
+                        <th>Time</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% elif grid %}
-        <h2>Your Weekly Timetable</h2>
-        <table border="1" cellpadding="6" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    {% for d in grid.days %}
-                        <th>{{ d }}</th>
+                </thead>
+                <tbody>
+                    {% for row in triplets %}
+                        <tr>
+                            <td>{{ row.topic }}</td>
+                            <td>{{ row.day }}</td>
+                            <td>{{ row.time }}</td>
+                        </tr>
                     {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in grid.rows %}
+                </tbody>
+            </table>
+        {% elif grid %}
+            <h2>Your Weekly Timetable</h2>
+            <table border="1" cellpadding="6" cellspacing="0">
+                <thead>
                     <tr>
-                        <td>{{ row.time }}</td>
+                        <th>Time</th>
                         {% for d in grid.days %}
-                            <td>{{ row.get(d, '') }}</td>
+                            <th>{{ d }}</th>
                         {% endfor %}
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% elif table %}
-        <h2>Your Timetable (list):</h2>
-        <table border="1" cellpadding="6" cellspacing="0">
-            <thead>
-                <tr>
-                    {% for k in table[0].keys() %}
-                        <th>{{ k|capitalize }}</th>
+                </thead>
+                <tbody>
+                    {% for row in grid.rows %}
+                        <tr>
+                            <td>{{ row.time }}</td>
+                            {% for d in grid.days %}
+                                <td>{{ row.get(d, '') }}</td>
+                            {% endfor %}
+                        </tr>
                     {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in table %}
+                </tbody>
+            </table>
+        {% elif table %}
+            <h2>Your Timetable (list):</h2>
+            <table border="1" cellpadding="6" cellspacing="0">
+                <thead>
                     <tr>
-                        {% for v in row.values() %}
-                            <td>{{ v }}</td>
+                        {% for k in table[0].keys() %}
+                            <th>{{ k|capitalize }}</th>
                         {% endfor %}
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% elif result %}
-        <h2>Your Timetable:</h2>
-        <pre>{{ result }}</pre>
-    {% endif %}
+                </thead>
+                <tbody>
+                    {% for row in table %}
+                        <tr>
+                            {% for v in row.values() %}
+                                <td>{{ v }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% elif result %}
+            <h2>Your Timetable:</h2>
+            <pre>{{ result }}</pre>
+        {% endif %}
 
+        {% if references %}
+            <div class="references-container">
+                <h2>📚 Recommended Learning Resources</h2>
+                <div class="reference-list">
+                    {% for ref in references %}
+                        <div class="reference-item">
+                            <span class="reference-type">{{ ref.type }}</span>
+                            <h4>{{ ref.title }}</h4>
+                            <a href="{{ ref.url }}" target="_blank" rel="noopener noreferrer">Visit Resource →</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>
