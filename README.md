@@ -38,7 +38,7 @@ Python
 
 Google Generative AI SDK
 
-Gemini API
+Huggingface API
 
 vs code
 
@@ -80,3 +80,4 @@ Clean, reproducible Colab implementation
   ],
   "final_project": ""
 }
+
